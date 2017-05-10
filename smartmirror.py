@@ -335,6 +335,11 @@ class FullscreenWindow:
         self.tk.attributes("-fullscreen", False)
         return "break"
 
+    def finish(self):
+	print("will fire quit now")
+	self.tk.quit()
+
 if __name__ == '__main__':
     w = FullscreenWindow()
+    w.tk.after(1000*60, w.finish)
     w.tk.mainloop()
