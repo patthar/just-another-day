@@ -23,9 +23,9 @@ date_format = "%b %d, %Y" # check python doc for strftime() for options
 news_country_code = 'us'
 #weather_api_token = '744e11fc67b35a9152176cc11278aa93' # create account at https://darksky.net/dev/
 weather_lang = 'en' # see https://darksky.net/dev/docs/forecast for full list of language parameters values
-weather_unit = 'us' # see https://darksky.net/dev/docs/forecast for full list of unit parameters values
-latitude = None # Set this if IP location lookup does not work for you (must be a string)
-longitude = None # Set this if IP location lookup does not work for you (must be a string)
+weather_unit = 'si' # see https://darksky.net/dev/docs/forecast for full list of unit parameters values
+latitude = '52.227052' # Set this if IP location lookup does not work for you (must be a string)
+longitude = '5.188532' # Set this if IP location lookup does not work for you (must be a string)
 xlarge_text_size = 94
 large_text_size = 48
 medium_text_size = 28
@@ -143,6 +143,7 @@ class Weather(Frame):
     def get_weather(self):
         try:
 
+	    weather_api_token = self.get_api_key()
             if latitude is None and longitude is None:
                 # get location
                 location_req_url = "http://freegeoip.net/json/%s" % self.get_ip()
@@ -154,7 +155,6 @@ class Weather(Frame):
 
                 location2 = "%s, %s" % (location_obj['city'], location_obj['region_code'])
 
-		weather_api_token = self.get_api_key()
                 # get weather
                 weather_req_url = "https://api.darksky.net/forecast/%s/%s,%s?lang=%s&units=%s" % (weather_api_token, lat,lon,weather_lang,weather_unit)
             else:
