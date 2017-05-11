@@ -122,6 +122,9 @@ class Weather(Frame):
         self.forecastLbl.pack(side=TOP, anchor=W)
         self.locationLbl = Label(self, font=('Helvetica', small_text_size), fg="white", bg="black")
         self.locationLbl.pack(side=TOP, anchor=W)
+        self.attribution = Label(self, font=('Helvetica', 12), fg="white", bg="black")
+        self.attribution.pack(side=TOP, anchor=W)
+	self.attribution.config(text="Powered by Dark Sky")
         self.get_weather()
 
     def get_api_key(self):
