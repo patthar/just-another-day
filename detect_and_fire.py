@@ -7,7 +7,7 @@ import subprocess
  
 io.setwarnings(False)
 io.setmode(io.BOARD)
-SHUTOFF_DELAY = 10  # seconds
+SHUTOFF_DELAY = 60 * 5  # seconds
 PIR_PIN = 7         
 log_file = open("/tmp/detect_and_fire.log", "w")
  
@@ -15,6 +15,7 @@ def main():
     io.setup(PIR_PIN, io.IN)
     turned_off = True
     last_motion_time = time.time()
+    subprocess.call("sh -c export DISPLAY=:0 && cd /home/pi/projects/just-another-day && python /home/pi/projects/just-another-day/smartmirror.py", shell=True)
  
     while True:
         if io.input(PIR_PIN):

@@ -345,5 +345,5 @@ class FullscreenWindow:
 if __name__ == '__main__':
     w = FullscreenWindow()
     w.toggle_fullscreen()
-    w.tk.after(1000*60, w.finish)
+    #w.tk.after(1000*60, w.finish)
     w.tk.mainloop()
