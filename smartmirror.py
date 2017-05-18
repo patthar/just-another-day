@@ -253,7 +253,7 @@ class Weather(Frame):
             icon_id = block['icon']
 	    icon = icon_lookup[icon_id]
 
-	    weather['temp'].config(text=temperature, align=left)
+	    weather['temp'].config(text=temperature)
 	    weather['dow'].config(text=dayofweek)
 	    image = Image.open(icon)
 	    image = image.resize((50, 50), Image.ANTIALIAS)
