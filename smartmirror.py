@@ -9,6 +9,7 @@ import time
 import requests
 import json
 import traceback
+import time
 import feedparser
 from quickstart import get_todo_messages
 
@@ -110,6 +111,10 @@ class Weather(Frame):
         self.location = ''
         self.currently = ''
         self.icon = ''
+	self.days_forecast = []
+        self.attribution = Label(self, font=('Helvetica', 12), fg="white", bg="black")
+        self.attribution.pack(side=TOP, anchor=W)
+	self.attribution.config(text="Powered by Dark Sky")
         self.degreeFrm = Frame(self, bg="black")
         self.degreeFrm.pack(side=TOP, anchor=W)
         self.temperatureLbl = Label(self.degreeFrm, font=('Helvetica', xlarge_text_size), fg="white", bg="black")
@@ -122,9 +127,26 @@ class Weather(Frame):
         self.forecastLbl.pack(side=TOP, anchor=W)
         self.locationLbl = Label(self, font=('Helvetica', small_text_size), fg="white", bg="black")
         self.locationLbl.pack(side=TOP, anchor=W)
-        self.attribution = Label(self, font=('Helvetica', 12), fg="white", bg="black")
-        self.attribution.pack(side=TOP, anchor=W)
-	self.attribution.config(text="Powered by Dark Sky")
+        self.weeklyLbl = Label(self, font=('Helvetica', small_text_size-4), fg="white", bg="black")
+        self.weeklyLbl.pack(side=TOP, anchor=W)
+
+        self.weeklyFrm = Frame(self, bg="black")
+        self.weeklyFrm.pack(side=BOTTOM, anchor=W)
+	for i in range(0,7):
+	    #fr = Frame( self.weeklyFrm, bg="black")
+	    #fr.pack(side=LEFT, anchor=W)
+
+	    dowLbl = Label(self.weeklyFrm, font=('Helvetica', small_text_size-5), fg="white", bg="black", anchor=W)
+	    dowLbl.grid(row=0, column=i)
+	    iconLbl = Label(self.weeklyFrm, bg="black")
+	    iconLbl.grid(row=1, column=i)
+	    tempLbl = Label(self.weeklyFrm, font=('Helvetica', small_text_size-5), fg="white", bg="black", anchor=E)
+	    tempLbl.grid(row=2, column=i)
+
+	    frame = { 'temp' : tempLbl, 'icon' : iconLbl, 'dow' : dowLbl }
+	    self.days_forecast.append(frame)
+
+
         self.get_weather()
 
     def get_api_key(self):
@@ -209,11 +231,39 @@ class Weather(Frame):
                 else:
                     self.location = location2
                     self.locationLbl.config(text=location2)
+	    self.populate_weekly(weather_obj["daily"])
         except Exception as e:
             traceback.print_exc()
             print "Error: %s. Cannot get weather." % e
 
         self.after(600000, self.get_weather)
+
+    def populate_weekly(self, weather_obj):
+
+	self.weeklyLbl.config(text=weather_obj["summary"])
+	weather_obj['data'].reverse()
+	weather_obj['data'].pop()
+	for weather in self.days_forecast:
+	    block = weather_obj['data'].pop()
+            degree_sign= u'\N{DEGREE SIGN}'
+            temperature = "%s%s(min) %s%s(max)" % ( str(int(block['temperatureMin'])), degree_sign,
+						    str(int(block['temperatureMax'])), degree_sign )
+            forecast  = block["summary"]
+	    dayofweek = "%s" % ( time.strftime("%m/%d %A", time.localtime(block["time"])) )
+            icon_id = block['icon']
+	    icon = icon_lookup[icon_id]
+
+	    weather['temp'].config(text=temperature, align=left)
+	    weather['dow'].config(text=dayofweek)
+	    image = Image.open(icon)
+	    image = image.resize((50, 50), Image.ANTIALIAS)
+	    image = image.convert('RGB')
+	    photo = ImageTk.PhotoImage(image)
+
+	    weather['icon'].config(image=photo)
+	    weather['icon'].image = photo
+
+
 
     @staticmethod
     def convert_kelvin_to_fahrenheit(kelvin_temp):
